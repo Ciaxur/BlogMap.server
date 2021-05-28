@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start-dev": " concurrently \"tsc --watch\" \"nodemon build\" "
+    "start-dev": " concurrently \"tsc --watch\" \"nodemon build\" ",
+    "start": "node ./build",
+    "build": "tsc"
   },
   "author": "Omar Omar",
   "license": "MIT",
