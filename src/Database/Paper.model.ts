@@ -10,6 +10,8 @@ export interface IPaper {
   body:       string,
   type:       IPaperType,
   author:     IAuthor,
+  categories: string,
+  tags:       string[],
   createdAt:  Date,
   updatedAt:  Date,
 }
@@ -19,6 +21,8 @@ const PaperSchema = new Schema<IPaper>({
   body:   { type: String, minLength: 1, required: true, trim: true },
   type:   { type: String, enum: PaperType, required: true },
   author: { type: 'ObjectId', ref: 'Author', required: true },
+  categories: { type: String, minLength: 4, maxLength: 64, default: '', trim: true, },
+  tags:   { type: [String], default: [] },
 
   // INDEXED ENTRY
   _title:  { type: String, minLength: 8, maxLength: 128, required: true, trim: true, indexed: true, lowercase: true },
@@ -42,6 +46,19 @@ export const PaperValidator = Joi.object<IPaper>({
   author: Joi
     .string().trim()
     .required(),
+  categories: Joi
+    .string().trim()
+    .min(4).max(64).default(''),
+  tags: Joi
+    .array()
+    .items(
+      Joi
+        .string()
+        .min(3).max(32)
+        .trim()
+        .lowercase()
+    )
+    .default([]),
 });
 
 export const PaperModel = model('Paper', PaperSchema);
