@@ -10,22 +10,22 @@ export interface IPaper {
   body:       string,
   type:       IPaperType,
   author:     IAuthor,
-  categories: string,
+  category:   string,
   tags:       string[],
   createdAt:  Date,
   updatedAt:  Date,
 }
 
 const PaperSchema = new Schema<IPaper>({
-  title:  { type: String, minLength: 8, maxLength: 128, required: true, trim: true },
+  title:  { type: String, minLength: 4, maxLength: 128, required: true, trim: true },
   body:   { type: String, minLength: 1, required: true, trim: true },
   type:   { type: String, enum: PaperType, required: true },
   author: { type: 'ObjectId', ref: 'Author', required: true },
-  categories: { type: String, minLength: 4, maxLength: 64, default: '', trim: true, },
+  category: { type: String, maxLength: 64, default: '', trim: true, },
   tags:   { type: [String], default: [] },
 
   // INDEXED ENTRY
-  _title:  { type: String, minLength: 8, maxLength: 128, required: true, trim: true, indexed: true, lowercase: true },
+  _title:  { type: String, minLength: 4, maxLength: 128, required: true, trim: true, indexed: true, lowercase: true },
 }, {
   timestamps: true,
 });
@@ -34,7 +34,7 @@ export const PaperValidator = Joi.object<IPaper>({
   title: Joi
     .string().trim()
     .required()
-    .min(8).max(128),
+    .min(4).max(128),
   body: Joi
     .string().trim()
     .required()
@@ -46,9 +46,10 @@ export const PaperValidator = Joi.object<IPaper>({
   author: Joi
     .string().trim()
     .required(),
-  categories: Joi
+  category: Joi
     .string().trim()
-    .min(4).max(64).default(''),
+    .optional()
+    .max(64).default(''),
   tags: Joi
     .array()
     .items(
