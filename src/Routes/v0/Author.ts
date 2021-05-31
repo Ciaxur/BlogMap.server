@@ -95,6 +95,93 @@ app.post('/', async (req, res) => {
   }
 });
 
+/**
+ * Removes given Author based on ID
+ * @param req.params.id Valid ObjectId
+ */
+ app.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const entry = await AuthorModel.findById(id);
+
+    // Entry not found
+    if (!entry) {
+      return res
+        .status(404)
+        .json({
+          err: 'Author Entry not found',
+        });
+    }
+    const removedEntry = await AuthorModel.deleteOne({ _id: id });
+    
+    if (removedEntry.ok) {
+      res
+        .status(200)
+        .json({
+          data: entry,
+        });
+    } else {
+      throw new Error(`Could not remove author '${id}'`);
+    }
+  } catch(e) {
+    res
+      .status(500)
+      .json({
+        err: e.toString() || 'Could not remove given author id',
+        _debug: e,
+      });
+  }
+});
+
+/**
+ * Patches given Author body and ID
+ * @param req.params.id Valid ObjectId
+ * @param req.body Valid IPaper Object
+ */
+app.patch('/:id', async (req, res) => {
+  const { id } = req.params;
+  const author: IAuthor = req.body as IAuthor;
+  const validation = AuthorValidator.validate(author);
+  if (validation.error) {
+    return res
+      .status(400)
+      .json({
+        err: 'Invalid Author Entry',
+        _debug: validation.error,
+      });
+    }
+
+  try {
+    const entry = await AuthorModel.findById(id);
+
+    // Entry not found
+    if (!entry) {
+      return res
+        .status(404)
+        .json({
+          err: 'Author Entry not found',
+        });
+    }
+    const updatedEntry = await AuthorModel.updateOne({ _id: id }, author);
+    
+    if (updatedEntry.ok) {
+      res
+        .status(200)
+        .json({
+          data: author,
+        });
+    } else {
+      throw new Error(`Could not update author '${id}'`);
+    }
+  } catch(e) {
+    res
+      .status(500)
+      .json({
+        err: e.toString() || 'Could not update given author id',
+        _debug: e,
+      });
+  }
+});
 
 
 export default app;
