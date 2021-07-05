@@ -3,6 +3,7 @@ services:
   blog-map.server:
     image: node:12-alpine
     working_dir: /usr/app
+    container_name: blog-map.server
     command: npm start
     volumes:
       - ./:/usr/app
