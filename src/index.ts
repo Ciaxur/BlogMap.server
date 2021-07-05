@@ -15,7 +15,16 @@ const {
 
 // INIT & CONFIG EXPRESS
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [
+    'localhost:3000',
+    'localhost:8000',
+    'localhost:8080',
+    'lvh.me:3000',
+    'lvh.me:8000',
+    'lvh.me:8080',
+  ],
+}));
 app.use(express.json());
 app.use(helmet());
 app.use(morgan('tiny'));
